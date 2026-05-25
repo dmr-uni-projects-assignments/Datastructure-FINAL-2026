@@ -1,6 +1,8 @@
 package com.jjs.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -30,9 +32,28 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        // TODO: separate this into funcs
+        float delta = Gdx.graphics.getDeltaTime();
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            playerY += speed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            playerY -= speed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            playerX -= speed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            playerX += speed * delta;
+        }
+
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
-        batch.draw(playerTexture, 140, 210);
+        batch.draw(playerTexture, playerX, playerY);
         batch.end();
     }
 
