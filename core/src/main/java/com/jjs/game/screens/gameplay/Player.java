@@ -1,4 +1,4 @@
-package com.screens.gameplay;
+package com.jjs.game.screens.gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
