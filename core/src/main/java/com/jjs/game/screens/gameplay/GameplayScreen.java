@@ -4,10 +4,18 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class Gameplay implements Screen {
+import com.jjs.game.*;
+
+public class GameplayScreen implements Screen {
+    private Main game;
 
     private SpriteBatch batch;
     private Player player;
+    
+    
+    public GameplayScreen(Main game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -38,7 +46,6 @@ public class Gameplay implements Screen {
         player.dispose();
     }
 
-    // Required Screen methods
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
