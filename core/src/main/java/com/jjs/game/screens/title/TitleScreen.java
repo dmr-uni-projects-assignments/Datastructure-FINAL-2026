@@ -5,11 +5,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.jjs.game.utils.Constants;
 
 import com.jjs.game.*;
 import com.jjs.game.screens.gameplay.GameplayScreen;
-// import com.jjs.game.screens.tournament.TournamentScreen;
+import com.jjs.game.screens.tournament.TournamentScreen;
 
 public class TitleScreen implements Screen {
     private final Main game;
@@ -24,19 +25,18 @@ public class TitleScreen implements Screen {
     @Override
     public void show() {
 
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(
+                new StretchViewport(Constants.WIDTH, Constants.HEIGHT));
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
         Label title = new Label("Untitled Building Shooter", skin);
-
         TextButton playButton = new TextButton("Play Game", skin);
-
         TextButton tournamentButton = new TextButton("Tournament Tracker", skin);
 
         playButton.addListener(e -> {
@@ -45,10 +45,9 @@ public class TitleScreen implements Screen {
             }
             return true;
         });
-
         tournamentButton.addListener(e -> {
             if (tournamentButton.isPressed()) {
-                // game.setScreen(new TournamentScreen(game));
+                game.setScreen(new TournamentScreen(game));
             }
             return true;
         });
@@ -86,6 +85,7 @@ public class TitleScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
