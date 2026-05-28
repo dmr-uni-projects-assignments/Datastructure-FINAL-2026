@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.jjs.game.Main;
+import com.jjs.game.screens.gameplay.*;
 import com.jjs.game.utils.*;
 
 public class GameplayScreen implements Screen {

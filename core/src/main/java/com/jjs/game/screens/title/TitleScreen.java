@@ -24,7 +24,6 @@ public class TitleScreen implements Screen {
 
     @Override
     public void show() {
-
         stage = new Stage(
                 new StretchViewport(Constants.WIDTH, Constants.HEIGHT));
         Gdx.input.setInputProcessor(stage);
@@ -70,7 +69,6 @@ public class TitleScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1f);
 
         stage.act(delta);
