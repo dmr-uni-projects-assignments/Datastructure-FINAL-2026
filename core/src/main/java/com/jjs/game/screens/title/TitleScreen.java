@@ -27,7 +27,7 @@ public class TitleScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("ui\\uiskin.json"));
 
         Table table = new Table();
         table.setFillParent(true);
