@@ -19,6 +19,14 @@ public abstract class Character {
         this.hp = 100;
     }
 
+    protected void move(boolean isVertical, float amount) {
+        if (isVertical) {
+            y += amount;
+        } else {
+            x += amount;
+        }
+    }
+
     public abstract void update(float dt);
 
     public void render(SpriteBatch batch) {
