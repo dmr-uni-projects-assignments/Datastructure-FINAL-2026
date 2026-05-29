@@ -1,5 +1,7 @@
 package com.jjs.game.screens.gameplay;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,7 +25,7 @@ public class GameplayScreen implements Screen {
     private Vector3 mousePos = new Vector3();
 
     private Player player;
-    private Character[] entities;
+    private ArrayList<Character> entities;
 
     public GameplayScreen(Main game) {
         this.game = game;
@@ -55,15 +57,19 @@ public class GameplayScreen implements Screen {
         camera.update();
 
         batch = new SpriteBatch();
+        entities = new ArrayList<>();
 
         // spawn all
         player = new Player(0, 0);
-        entities = new Character[] {
-                player,
-                new Enemy(600, 300),
-                new Enemy(900, 500),
-                new Enemy(400, 600)
-        };
+        entities.add(player);
+        // add enemies
+        for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
+
+            float x = (float) (Math.random() * Constants.WIDTH);
+            float y = (float) (Math.random() * Constants.HEIGHT);
+
+            entities.add(new Enemy(x, y));
+        }
     }
 
     @Override
