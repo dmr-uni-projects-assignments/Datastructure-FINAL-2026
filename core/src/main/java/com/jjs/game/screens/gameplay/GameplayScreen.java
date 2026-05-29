@@ -11,11 +11,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import com.jjs.game.Main;
 import com.jjs.game.utils.*;
 
 public class GameplayScreen implements Screen {
-    private final Main game;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -27,8 +25,7 @@ public class GameplayScreen implements Screen {
     private Player player;
     private ArrayList<Character> entities;
 
-    public GameplayScreen(Main game) {
-        this.game = game;
+    public GameplayScreen() {
     }
 
     private void updateMouse() {

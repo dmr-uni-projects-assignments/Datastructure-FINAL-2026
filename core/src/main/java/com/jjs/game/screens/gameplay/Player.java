@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends Character {
     public Player(float x, float y) {
-        super(new Texture("libgdx.png"), x, y);
+        super(new Texture("player.png"), x, y);
     }
 
     @Override

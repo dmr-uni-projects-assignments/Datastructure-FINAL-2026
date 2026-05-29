@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Enemy extends Character {
     public Enemy(float x, float y) {
-        super(new Texture("libgdx.png"), x, y);
+        super(new Texture("enemy.png"), x, y);
     }
 
     @Override

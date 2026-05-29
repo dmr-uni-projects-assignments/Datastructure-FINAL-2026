@@ -40,13 +40,13 @@ public class TitleScreen implements Screen {
 
         playButton.addListener(e -> {
             if (playButton.isPressed()) {
-                game.setScreen(new GameplayScreen(game));
+                game.setScreen(new GameplayScreen());
             }
             return true;
         });
         tournamentButton.addListener(e -> {
             if (tournamentButton.isPressed()) {
-                game.setScreen(new TournamentScreen(game));
+                game.setScreen(new TournamentScreen());
             }
             return true;
         });
@@ -96,5 +96,6 @@ public class TitleScreen implements Screen {
 
     @Override
     public void hide() {
+        dispose();
     }
 }

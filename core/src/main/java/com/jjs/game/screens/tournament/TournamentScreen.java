@@ -1,16 +1,11 @@
 package com.jjs.game.screens.tournament;
 
 import com.badlogic.gdx.Screen;
-
-import com.jjs.game.*;
-
 // PLACEHOLDER FOR LATER
 
 public class TournamentScreen implements Screen {
-    private final Main game;
 
-    public TournamentScreen(Main game) {
-        this.game = game;
+    public TournamentScreen() {
     }
 
     @Override
