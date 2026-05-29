@@ -14,4 +14,7 @@ public class Constants {
         EAST,
         WEST
     }
+
+    public static final float PX_LEFTOVER = 16f;
+    public static final float TL_LEFTOVER = PX_LEFTOVER / 64f;
 }

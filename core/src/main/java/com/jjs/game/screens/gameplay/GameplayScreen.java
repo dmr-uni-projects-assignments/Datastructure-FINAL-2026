@@ -51,20 +51,20 @@ public class GameplayScreen implements Screen {
 
         world = new TileMap();
         worldRenderer = new WorldRenderer();
-        // world.setWall(5, 5, Constants.Direction.NORTH, true);
-        // world.setWall(5, 5, Constants.Direction.EAST, true);
-        // world.setWall(10, 10, Constants.Direction.SOUTH, true);
+        world.setWall(5, 5, Constants.Direction.NORTH, true);
+        world.setWall(5, 5, Constants.Direction.EAST, true);
+        world.setWall(10, 10, Constants.Direction.SOUTH, true);
 
         // populate entity list
         entities = new ArrayList<>();
-        player = new Player(0, 0);
+        player = new Player(0, 0, world);
         entities.add(player);
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
 
             float x = (float) (Math.random() * Constants.WIDTH);
             float y = (float) (Math.random() * Constants.HEIGHT);
 
-            entities.add(new Enemy(x, y));
+            entities.add(new Enemy(x, y, world));
         }
     }
 
@@ -95,6 +95,10 @@ public class GameplayScreen implements Screen {
 
         camera.position.set(player.getCoords()[0], player.getCoords()[1], 0);
         camera.update();
+
+        // TODO: remove debug
+        // float[] temp = Functions.pixelToTile(player.getCoords()[0], player.getCoords()[1]);
+        // System.out.println(String.format("%f, %f", temp[0], temp[1]));
     }
 
     @Override
