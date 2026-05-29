@@ -3,11 +3,11 @@ package com.jjs.game.screens.gameplay.world;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.jjs.game.utils.Constants;
+import com.jjs.game.utils.*;
 
 public class WorldRenderer {
-
     private ShapeRenderer shapeRenderer;
+    private static final float LINE_THICKNESS = 2f;
 
     public WorldRenderer() {
         shapeRenderer = new ShapeRenderer();
@@ -18,7 +18,7 @@ public class WorldRenderer {
             OrthographicCamera camera) {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (int x = 0; x < Constants.MAP_SIZE; x++) {
             for (int y = 0; y < Constants.MAP_SIZE; y++) {
@@ -37,7 +37,11 @@ public class WorldRenderer {
                 else
                     shapeRenderer.setColor(Color.GRAY);
 
-                shapeRenderer.line(px, py + 64, px + 64, py + 64);
+                shapeRenderer.rect(
+                        px,
+                        py + 64 - LINE_THICKNESS / 2f,
+                        64,
+                        LINE_THICKNESS);
 
                 // south
                 if (tile.hasWall(Constants.Direction.SOUTH))
@@ -45,7 +49,11 @@ public class WorldRenderer {
                 else
                     shapeRenderer.setColor(Color.GRAY);
 
-                shapeRenderer.line(px, py, px + 64, py);
+                shapeRenderer.rect(
+                        px,
+                        py - LINE_THICKNESS / 2f,
+                        64,
+                        LINE_THICKNESS);
 
                 // east
                 if (tile.hasWall(Constants.Direction.EAST))
@@ -53,7 +61,11 @@ public class WorldRenderer {
                 else
                     shapeRenderer.setColor(Color.GRAY);
 
-                shapeRenderer.line(px + 64, py, px + 64, py + 64);
+                shapeRenderer.rect(
+                        px + 64 - LINE_THICKNESS / 2f,
+                        py,
+                        LINE_THICKNESS,
+                        64);
 
                 // west
                 if (tile.hasWall(Constants.Direction.WEST))
@@ -61,7 +73,11 @@ public class WorldRenderer {
                 else
                     shapeRenderer.setColor(Color.GRAY);
 
-                shapeRenderer.line(px, py, px, py + 64);
+                shapeRenderer.rect(
+                        px - LINE_THICKNESS / 2f,
+                        py,
+                        LINE_THICKNESS,
+                        64);
             }
         }
 
