@@ -12,12 +12,15 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.jjs.game.utils.*;
+import com.jjs.game.screens.gameplay.world.*;
 
 public class GameplayScreen implements Screen {
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Viewport viewport;
+    private TileMap world;
+    private WorldRenderer worldRenderer;
 
     // used for aiming later on
     private Vector3 mousePos = new Vector3();
@@ -41,25 +44,21 @@ public class GameplayScreen implements Screen {
     public void show() {
         camera = new OrthographicCamera();
 
-        viewport = new StretchViewport(
-                Constants.WIDTH,
-                Constants.HEIGHT,
-                camera);
+        viewport = new StretchViewport(Constants.WIDTH, Constants.HEIGHT, camera);
 
         viewport.apply();
-        camera.position.set(
-                Constants.WIDTH / 2f,
-                Constants.HEIGHT / 2f,
-                0);
-        camera.update();
-
         batch = new SpriteBatch();
-        entities = new ArrayList<>();
 
-        // spawn all
+        world = new TileMap();
+        worldRenderer = new WorldRenderer();
+        // world.setWall(5, 5, Constants.Direction.NORTH, true);
+        // world.setWall(5, 5, Constants.Direction.EAST, true);
+        // world.setWall(10, 10, Constants.Direction.SOUTH, true);
+
+        // populate entity list
+        entities = new ArrayList<>();
         player = new Player(0, 0);
         entities.add(player);
-        // add enemies
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
 
             float x = (float) (Math.random() * Constants.WIDTH);
@@ -74,8 +73,9 @@ public class GameplayScreen implements Screen {
 
         update(delta);
 
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0f, 0f, 0f, 1f);
 
+        worldRenderer.render(world, camera);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -92,11 +92,15 @@ public class GameplayScreen implements Screen {
         for (Character c : entities) {
             c.update(delta);
         }
+
+        camera.position.set(player.getCoords()[0], player.getCoords()[1], 0);
+        camera.update();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
+        worldRenderer.dispose();
         for (Character c : entities) {
             c.dispose();
         }

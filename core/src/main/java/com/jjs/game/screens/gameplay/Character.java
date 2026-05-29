@@ -19,6 +19,11 @@ public abstract class Character {
         this.hp = 100;
     }
 
+    public float[] getCoords() {
+        return new float[]{x, y};
+    }
+
+
     protected void move(boolean isVertical, float amount) {
         if (isVertical) {
             y += amount;

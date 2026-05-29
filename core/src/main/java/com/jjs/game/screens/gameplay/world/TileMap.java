@@ -1,7 +1,6 @@
 package com.jjs.game.screens.gameplay.world;
 
 import com.jjs.game.utils.*;
-import com.jjs.game.utils.Constants.Direction;
 
 public class TileMap {
     private Tile[][] tiles;
