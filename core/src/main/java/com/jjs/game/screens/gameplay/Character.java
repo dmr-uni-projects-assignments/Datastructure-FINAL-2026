@@ -28,7 +28,7 @@ public abstract class Character {
         return new float[] { x, y };
     }
 
-    protected void move(boolean isVertical, float amount) {
+    protected boolean move(boolean isVertical, float amount) {
 
         float newX = x;
         float newY = y;
@@ -55,9 +55,8 @@ public abstract class Character {
             if (newTileX < currentTileX) {
                 for (int ty = bottomTile; ty <= topTile; ty++) {
                     Tile tile = world.getTile(currentTileX, ty);
-                    if (tile != null &&
-                            tile.hasWall(Constants.Direction.WEST)) {
-                        return;
+                    if (tile != null && tile.hasWall(Constants.Direction.WEST)) {
+                        return false;
                     }
                 }
             }
@@ -74,9 +73,8 @@ public abstract class Character {
             if (newTileX > currentTileX) {
                 for (int ty = bottomTile; ty <= topTile; ty++) {
                     Tile tile = world.getTile(currentTileX, ty);
-                    if (tile != null &&
-                            tile.hasWall(Constants.Direction.EAST)) {
-                        return;
+                    if (tile != null && tile.hasWall(Constants.Direction.EAST)) {
+                        return false;
                     }
                 }
             }
@@ -93,9 +91,8 @@ public abstract class Character {
             if (newTileY < currentTileY) {
                 for (int tx = leftTile; tx <= rightTile; tx++) {
                     Tile tile = world.getTile(tx, currentTileY);
-                    if (tile != null &&
-                            tile.hasWall(Constants.Direction.SOUTH)) {
-                        return;
+                    if (tile != null && tile.hasWall(Constants.Direction.SOUTH)) {
+                        return false;
                     }
                 }
             }
@@ -112,20 +109,19 @@ public abstract class Character {
             if (newTileY > currentTileY) {
                 for (int tx = leftTile; tx <= rightTile; tx++) {
                     Tile tile = world.getTile(tx, currentTileY);
-                    if (tile != null &&
-                            tile.hasWall(Constants.Direction.NORTH)) {
-                        return;
+                    if (tile != null && tile.hasWall(Constants.Direction.NORTH)) {
+                        return false;
                     }
                 }
             }
         }
 
+        // only goes here if the movement didnt collide with wall (edge of world is handled differently)
         x = newX;
         y = newY;
-
         x = Math.clamp(x, 0f, (Constants.MAP_SIZE - 1) * 64 + Constants.PX_LEFTOVER);
-
         y = Math.clamp(y, 0f, (Constants.MAP_SIZE - 1) * 64 + Constants.PX_LEFTOVER);
+        return true; 
     }
 
     public abstract void update(float dt);

@@ -64,7 +64,7 @@ public class GameplayScreen implements Screen {
             float x = (float) (Math.random() * Constants.WIDTH);
             float y = (float) (Math.random() * Constants.HEIGHT);
 
-            entities.add(new Enemy(x, y, world));
+            entities.add(new Enemy(x, y, world, entities));
         }
     }
 
