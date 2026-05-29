@@ -5,8 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends Character {
-    public Player() {
-        super(new Texture("libgdx.png"), 0, 0);
+    public Player(float x, float y) {
+        super(new Texture("libgdx.png"), x, y);
     }
 
     @Override

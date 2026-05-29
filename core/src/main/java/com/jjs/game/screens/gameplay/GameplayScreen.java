@@ -10,19 +10,20 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.jjs.game.Main;
-import com.jjs.game.screens.gameplay.*;
 import com.jjs.game.utils.*;
 
 public class GameplayScreen implements Screen {
     private final Main game;
 
     private SpriteBatch batch;
-    private Player player;
     private OrthographicCamera camera;
     private Viewport viewport;
 
     // used for aiming later on
     private Vector3 mousePos = new Vector3();
+
+    private Player player;
+    private Character[] entities;
 
     public GameplayScreen(Main game) {
         this.game = game;
@@ -54,7 +55,15 @@ public class GameplayScreen implements Screen {
         camera.update();
 
         batch = new SpriteBatch();
-        player = new Player();
+
+        // spawn all
+        player = new Player(0, 0);
+        entities = new Character[] {
+                player,
+                new Enemy(600, 300),
+                new Enemy(900, 500),
+                new Enemy(400, 600)
+        };
     }
 
     @Override
@@ -66,18 +75,28 @@ public class GameplayScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch);
+
+        // render players
+        for (Character c : entities) {
+            c.render(batch);
+        }
+
         batch.end();
     }
 
-    private void update(float dt) {
-        player.update(dt);
+    private void update(float delta) {
+        updateMouse();
+        for (Character c : entities) {
+            c.update(delta);
+        }
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        player.dispose();
+        for (Character c : entities) {
+            c.dispose();
+        }
     }
 
     @Override

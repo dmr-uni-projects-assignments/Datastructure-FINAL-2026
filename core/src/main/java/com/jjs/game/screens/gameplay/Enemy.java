@@ -3,8 +3,8 @@ package com.jjs.game.screens.gameplay;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Enemy extends Character {
-    public Enemy() {
-        super(new Texture("libgdx.png"), 0, 0);
+    public Enemy(float x, float y) {
+        super(new Texture("libgdx.png"), x, y);
     }
 
     @Override
