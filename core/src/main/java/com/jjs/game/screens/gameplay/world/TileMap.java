@@ -36,22 +36,22 @@ public class TileMap {
             case NORTH:
                 Tile north = getTile(x, y + 1);
                 if (north != null)
-                    north.setWall(Direction.SOUTH, value);
+                    north.setWall(Constants.Direction.SOUTH, value);
                 break;
             case SOUTH:
                 Tile south = getTile(x, y - 1);
                 if (south != null)
-                    south.setWall(Direction.NORTH, value);
+                    south.setWall(Constants.Direction.NORTH, value);
                 break;
             case EAST:
                 Tile east = getTile(x + 1, y);
                 if (east != null)
-                    east.setWall(Direction.WEST, value);
+                    east.setWall(Constants.Direction.WEST, value);
                 break;
             case WEST:
                 Tile west = getTile(x - 1, y);
                 if (west != null)
-                    west.setWall(Direction.EAST, value);
+                    west.setWall(Constants.Direction.EAST, value);
                 break;
         }
     }
