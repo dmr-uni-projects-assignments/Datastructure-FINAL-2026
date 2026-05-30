@@ -58,12 +58,14 @@ public class GameplayScreen implements Screen {
 
         // populate entity list
         entities = new ArrayList<>();
-        player = new Player(0, 0, world, entities);
+        float x = (float) (Math.random() * Constants.MAP_SIZE * 64);
+        float y = (float) (Math.random() * Constants.MAP_SIZE * 64);
+        player = new Player(x, y, world, entities);
         entities.add(player);
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
 
-            float x = (float) (Math.random() * Constants.WIDTH);
-            float y = (float) (Math.random() * Constants.HEIGHT);
+            x = (float) (Math.random() * Constants.MAP_SIZE * 64);
+            y = (float) (Math.random() * Constants.MAP_SIZE * 64);
 
             entities.add(new Enemy(x, y, world, entities));
         }
@@ -93,18 +95,48 @@ public class GameplayScreen implements Screen {
         updateMouse();
 
         // left mouse click shooting
-        if (Gdx.input.justTouched()) {
-
+        if (Gdx.input.isButtonJustPressed(0)) {
             float[] p = player.getCoords();
 
             // mouse - player center
             float dx = mousePos.x - (p[0] + 24);
             float dy = mousePos.y - (p[1] + 24);
 
-            // atan2 converts vector -> angle in radians
             float angle = (float) Math.atan2(dy, dx);
 
             player.shoot(angle, 10);
+        }
+
+        // right click wall building
+        if (Gdx.input.isButtonJustPressed(1)) {
+            float[] p = player.getCoords();
+
+            // mouse - player center
+            float dx = mousePos.x - (p[0] + 24);
+            float dy = mousePos.y - (p[1] + 24);
+
+            // player tile
+            int[] tile = Functions.pixelToTile(p[0], p[1], true);
+            Constants.Direction dir;
+
+            // choose dominant axis
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0) {
+                    dir = Constants.Direction.EAST;
+                } else {
+                    dir = Constants.Direction.WEST;
+                }
+
+            } else {
+                if (dy > 0) {
+                    dir = Constants.Direction.NORTH;
+                } else {
+                    dir = Constants.Direction.SOUTH;
+                }
+            }
+
+            // place wall
+            world.setWall(tile[0], tile[1], dir, true);
         }
 
         for (int i = 0; i < entities.size(); i++) {
