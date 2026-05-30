@@ -81,7 +81,8 @@ public class GameplayScreen implements Screen {
         batch.begin();
 
         // render players
-        for (Character c : entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            Character c = entities.get(i);
             c.render(batch);
         }
 
@@ -106,7 +107,8 @@ public class GameplayScreen implements Screen {
             player.shoot(angle, 10);
         }
 
-        for (Character c : entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            Character c = entities.get(i);
             c.update(delta);
         }
 
@@ -123,7 +125,8 @@ public class GameplayScreen implements Screen {
     public void dispose() {
         batch.dispose();
         worldRenderer.dispose();
-        for (Character c : entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            Character c = entities.get(i);
             c.dispose();
         }
     }

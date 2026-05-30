@@ -7,6 +7,7 @@ public class Constants {
 
     public static final int ENEMY_COUNT = 9;
     public static final int MAP_SIZE = 32;
+    public static final float WALL_DENSITY = 0.25f;
 
     public enum Direction {
         NORTH,

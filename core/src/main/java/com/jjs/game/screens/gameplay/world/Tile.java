@@ -10,7 +10,6 @@ public class Tile {
     private boolean westWall;
 
     public Tile() {
-
         northWall = false;
         southWall = false;
         eastWall = false;
@@ -18,7 +17,6 @@ public class Tile {
     }
 
     public boolean hasWall(Constants.Direction dir) {
-
         switch (dir) {
             case NORTH:
                 return northWall;
@@ -33,9 +31,7 @@ public class Tile {
         return false;
     }
 
-    public void setWall(
-            Constants.Direction dir,
-            boolean value) {
+    public void setWall(Constants.Direction dir, boolean value) {
 
         switch (dir) {
             case NORTH:

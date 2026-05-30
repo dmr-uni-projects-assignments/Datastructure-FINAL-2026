@@ -14,6 +14,16 @@ public class TileMap {
                 tiles[x][y] = new Tile();
             }
         }
+
+        // random walls
+        for (int x = 0; x < MAP_SIZE; x++) {
+            for (int y = 0; y < MAP_SIZE; y++) {
+                setWall(x, y, Constants.Direction.NORTH, Math.random() < Constants.WALL_DENSITY);
+                setWall(x, y, Constants.Direction.SOUTH, Math.random() < Constants.WALL_DENSITY);
+                setWall(x, y, Constants.Direction.EAST, Math.random() < Constants.WALL_DENSITY);
+                setWall(x, y, Constants.Direction.WEST, Math.random() < Constants.WALL_DENSITY);
+            }
+        }
     }
 
     public Tile getTile(int x, int y) {

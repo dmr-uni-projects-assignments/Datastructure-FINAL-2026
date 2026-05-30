@@ -184,14 +184,16 @@ public abstract class Character {
             }
 
             // character hit
-            for (Character c : entities) {
+            for (int i = 0; i < entities.size(); i++) {
+                Character c = entities.get(i);
                 // ignore self
                 if (c == this) {
                     continue;
                 }
                 // check if ray is within 48x48px hitbox
                 if (px >= c.x && px <= c.x + 48 && py >= c.y && py <= c.y + 48) {
-                    c.damage(damage);;
+                    c.damage(damage);
+                    ;
                     return;
                 }
             }

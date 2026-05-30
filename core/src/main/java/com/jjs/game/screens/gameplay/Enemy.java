@@ -145,7 +145,8 @@ public class Enemy extends Character {
     }
 
     private boolean tileOccupied(int tx, int ty) {
-        for (Character c : entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            Character c = entities.get(i);
             // ignore self and main player
             if (c == this) {
                 continue;
@@ -173,7 +174,8 @@ public class Enemy extends Character {
         Character closest = null;
         float bestDist = Float.MAX_VALUE;
 
-        for (Character c : entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            Character c = entities.get(i);
             // integrity check
             if (c == this) {
                 continue;
