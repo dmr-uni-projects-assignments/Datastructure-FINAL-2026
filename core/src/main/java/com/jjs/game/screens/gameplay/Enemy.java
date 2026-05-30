@@ -8,16 +8,13 @@ import com.jjs.game.utils.Constants;
 import com.jjs.game.utils.Functions;
 
 public class Enemy extends Character {
-    private ArrayList<Character> entities;
-
-    private float wanderTimer = 0f;
+   private float wanderTimer = 0f;
     private int wanderDir = -1;
     private float wanderChangeTimer = 0f;
     private Random random = new Random();
 
     public Enemy(float x, float y, TileMap world, ArrayList<Character> entities) {
-        super(new Texture("enemy.png"), x, y, world);
-        this.entities = entities;
+        super(new Texture("enemy.png"), x, y, world, entities);
     }
 
     // behold, pathfinding :tired:

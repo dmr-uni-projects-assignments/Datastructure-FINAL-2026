@@ -57,7 +57,7 @@ public class GameplayScreen implements Screen {
 
         // populate entity list
         entities = new ArrayList<>();
-        player = new Player(0, 0, world);
+        player = new Player(0, 0, world, entities);
         entities.add(player);
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
 

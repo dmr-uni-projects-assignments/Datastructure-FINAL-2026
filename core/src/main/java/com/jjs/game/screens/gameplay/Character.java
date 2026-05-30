@@ -1,5 +1,7 @@
 package com.jjs.game.screens.gameplay;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jjs.game.screens.gameplay.world.*;
@@ -11,17 +13,19 @@ public abstract class Character {
     protected float x;
     protected float y;
     protected final float speed = 250f;
-
     protected int hp;
 
+    // need to get these from the main game obj
     protected TileMap world;
+    protected ArrayList<Character> entities;
 
-    public Character(Texture texture, float x, float y, TileMap world) {
+    public Character(Texture texture, float x, float y, TileMap world, ArrayList<Character> entities) {
         this.texture = texture;
         this.x = x;
         this.y = y;
         this.hp = 100;
         this.world = world;
+        this.entities = entities;
     }
 
     public float[] getCoords() {
@@ -29,7 +33,6 @@ public abstract class Character {
     }
 
     protected boolean move(boolean isVertical, float amount) {
-
         float newX = x;
         float newY = y;
 
@@ -116,12 +119,13 @@ public abstract class Character {
             }
         }
 
-        // only goes here if the movement didnt collide with wall (edge of world is handled differently)
+        // only goes here if the movement didnt collide with wall (edge of world is
+        // handled differently)
         x = newX;
         y = newY;
         x = Math.clamp(x, 0f, (Constants.MAP_SIZE - 1) * 64 + Constants.PX_LEFTOVER);
         y = Math.clamp(y, 0f, (Constants.MAP_SIZE - 1) * 64 + Constants.PX_LEFTOVER);
-        return true; 
+        return true;
     }
 
     public abstract void update(float dt);
