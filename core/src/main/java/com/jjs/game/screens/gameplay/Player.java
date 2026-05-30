@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.jjs.game.screens.gameplay.world.*;
 
 public class Player extends Character {
-    public Player(float x, float y, TileMap world, ArrayList<Character> entities) {
-        super(new Texture("player.png"), x, y, world, entities);
+    public Player(float x, float y, TileMap world, ArrayList<Character> entities, ArrayList<ShotTrail> trails) {
+        super(new Texture("player.png"), x, y, world, entities, trails);
     }
 
     @Override

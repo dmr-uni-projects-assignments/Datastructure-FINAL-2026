@@ -19,8 +19,8 @@ public class Enemy extends Character {
     private static final float SHOOT_RATE = 1f / 5f; // 5hz
     private static final float SHOOT_RANGE = 500f; // px range
 
-    public Enemy(float x, float y, TileMap world, ArrayList<Character> entities) {
-        super(new Texture("enemy.png"), x, y, world, entities);
+    public Enemy(float x, float y, TileMap world, ArrayList<Character> entities, ArrayList<ShotTrail> trails) {
+        super(new Texture("enemy.png"), x, y, world, entities, trails);
     }
 
     @Override
@@ -201,10 +201,10 @@ public class Enemy extends Character {
         int[] goal = Functions.pixelToTile(target.x, target.y, true);
 
         // aliases
-        int startX = start[0];
-        int startY = start[1];
-        int goalX = goal[0];
-        int goalY = goal[1];
+        int startX = Math.clamp(start[0], 0, Constants.MAP_SIZE - 1);
+        int startY = Math.clamp(start[1], 0, Constants.MAP_SIZE - 1);
+        int goalX = Math.clamp(goal[0], 0, Constants.MAP_SIZE - 1);
+        int goalY = Math.clamp(goal[1], 0, Constants.MAP_SIZE - 1);
 
         // already there
         if (startX == goalX && startY == goalY) {

@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import com.jjs.game.utils.*;
 import com.jjs.game.screens.gameplay.world.*;
@@ -21,12 +23,14 @@ public class GameplayScreen implements Screen {
     private Viewport viewport;
     private TileMap world;
     private WorldRenderer worldRenderer;
+    private ShapeRenderer shapeRenderer;
 
     // used for aiming later on
     private Vector3 mousePos = new Vector3();
 
     private Player player;
     private ArrayList<Character> entities;
+    private ArrayList<ShotTrail> trails;
 
     public GameplayScreen() {
     }
@@ -51,34 +55,44 @@ public class GameplayScreen implements Screen {
 
         world = new TileMap();
         worldRenderer = new WorldRenderer();
+        shapeRenderer = new ShapeRenderer();
         // TODO: remove debug
-        world.setWall(5, 5, Constants.Direction.NORTH, true);
-        world.setWall(5, 5, Constants.Direction.EAST, true);
-        world.setWall(10, 10, Constants.Direction.SOUTH, true);
+        // world.setWall(5, 5, Constants.Direction.NORTH, true);
+        // world.setWall(5, 5, Constants.Direction.EAST, true);
+        // world.setWall(10, 10, Constants.Direction.SOUTH, true);
 
+        trails = new ArrayList<>();
         // populate entity list
         entities = new ArrayList<>();
         float x = (float) (Math.random() * Constants.MAP_SIZE * 64);
         float y = (float) (Math.random() * Constants.MAP_SIZE * 64);
-        player = new Player(x, y, world, entities);
+        player = new Player(x, y, world, entities, trails);
         entities.add(player);
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
 
             x = (float) (Math.random() * Constants.MAP_SIZE * 64);
             y = (float) (Math.random() * Constants.MAP_SIZE * 64);
 
-            entities.add(new Enemy(x, y, world, entities));
+            entities.add(new Enemy(x, y, world, entities, trails));
         }
     }
 
     @Override
     public void render(float delta) {
-
         update(delta);
 
         ScreenUtils.clear(0f, 0f, 0f, 1f);
 
         worldRenderer.render(world, camera);
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (int i = 0; i < trails.size(); i++) {
+            ShotTrail t = trails.get(i);
+            shapeRenderer.setColor(1f, 1f, 0f, t.life / 0.15f);
+            shapeRenderer.rectLine(t.x1, t.y1, t.x2, t.y2, 3f);
+        }
+        shapeRenderer.end();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -139,6 +153,12 @@ public class GameplayScreen implements Screen {
             world.setWall(tile[0], tile[1], dir, true);
         }
 
+        for (int i = trails.size() - 1; i >= 0; i--) {
+            if (trails.get(i).update(delta)) {
+                trails.remove(i);
+            }
+        }
+
         for (int i = 0; i < entities.size(); i++) {
             Character c = entities.get(i);
             c.update(delta);
@@ -157,6 +177,7 @@ public class GameplayScreen implements Screen {
     public void dispose() {
         batch.dispose();
         worldRenderer.dispose();
+        shapeRenderer.dispose();
         for (int i = 0; i < entities.size(); i++) {
             Character c = entities.get(i);
             c.dispose();

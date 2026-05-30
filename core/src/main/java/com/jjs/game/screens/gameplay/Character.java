@@ -18,14 +18,17 @@ public abstract class Character {
     // need to get these from the main game obj
     protected TileMap world;
     protected ArrayList<Character> entities;
+    protected ArrayList<ShotTrail> trails;
 
-    public Character(Texture texture, float x, float y, TileMap world, ArrayList<Character> entities) {
+    public Character(Texture texture, float x, float y, TileMap world, ArrayList<Character> entities,
+            ArrayList<ShotTrail> trails) {
         this.texture = texture;
         this.x = x;
         this.y = y;
         this.hp = 100;
         this.world = world;
         this.entities = entities;
+        this.trails = trails;
     }
 
     public float[] getCoords() {
@@ -138,6 +141,10 @@ public abstract class Character {
         float dx = (float) Math.cos(angle);
         float dy = (float) Math.sin(angle);
 
+        // ray rendering
+        float startX = px;
+        float startY = py;
+
         int[] prevTile = Functions.pixelToTile(px, py, false);
         int prevTileX = prevTile[0];
         int prevTileY = prevTile[1];
@@ -155,6 +162,7 @@ public abstract class Character {
 
             // ray oob
             if (tileX < 0 || tileY < 0 || tileX >= Constants.MAP_SIZE || tileY >= Constants.MAP_SIZE) {
+                trails.add(new ShotTrail(startX, startY, px, py));
                 return;
             }
 
@@ -164,21 +172,25 @@ public abstract class Character {
                 // east wall
                 if (tileX > prevTileX && tile.hasWall(Constants.Direction.EAST)) {
                     world.setWall(prevTileX, prevTileY, Constants.Direction.EAST, false);
+                    trails.add(new ShotTrail(startX, startY, px, py));
                     return;
                 }
                 // west wall
                 if (tileX < prevTileX && tile.hasWall(Constants.Direction.WEST)) {
                     world.setWall(prevTileX, prevTileY, Constants.Direction.WEST, false);
+                    trails.add(new ShotTrail(startX, startY, px, py));
                     return;
                 }
                 // north wall
                 if (tileY > prevTileY && tile.hasWall(Constants.Direction.NORTH)) {
                     world.setWall(prevTileX, prevTileY, Constants.Direction.NORTH, false);
+                    trails.add(new ShotTrail(startX, startY, px, py));
                     return;
                 }
                 // south wall
                 if (tileY < prevTileY && tile.hasWall(Constants.Direction.SOUTH)) {
                     world.setWall(prevTileX, prevTileY, Constants.Direction.SOUTH, false);
+                    trails.add(new ShotTrail(startX, startY, px, py));
                     return;
                 }
             }
@@ -193,7 +205,7 @@ public abstract class Character {
                 // check if ray is within 48x48px hitbox
                 if (px >= c.x && px <= c.x + 48 && py >= c.y && py <= c.y + 48) {
                     c.damage(damage);
-                    ;
+                    trails.add(new ShotTrail(startX, startY, px, py));
                     return;
                 }
             }
