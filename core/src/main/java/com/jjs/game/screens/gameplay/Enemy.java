@@ -8,18 +8,68 @@ import com.jjs.game.utils.Constants;
 import com.jjs.game.utils.Functions;
 
 public class Enemy extends Character {
-   private float wanderTimer = 0f;
+    // pathfinding vars
+    private float wanderTimer = 0f;
     private int wanderDir = -1;
     private float wanderChangeTimer = 0f;
     private Random random = new Random();
+
+    // shooting vars
+    private float shootTimer = 0f;
+    private static final float SHOOT_RATE = 1f / 5f; // 5hz
+    private static final float SHOOT_RANGE = 500f; // px range
 
     public Enemy(float x, float y, TileMap world, ArrayList<Character> entities) {
         super(new Texture("enemy.png"), x, y, world, entities);
     }
 
-    // behold, pathfinding :tired:
     @Override
     public void update(float dt) {
+        shooting(dt);
+        pathfind(dt);
+    }
+
+    private void shooting(float dt) {
+        shootTimer -= dt;
+        Character target = findClosestTarget();
+        // shooting logic
+        if (target != null) {
+            tryShoot(target);
+        }
+    }
+
+    private void tryShoot(Character target) {
+        // cooldown not ready
+        if (shootTimer > 0f) {
+            return;
+        }
+
+        float dx = target.x - x;
+        float dy = target.y - y;
+
+        // squared distance (skip sqrt for speed)
+        float dist2 = dx * dx + dy * dy;
+        float range2 = SHOOT_RANGE * SHOOT_RANGE;
+
+        // too far
+        if (dist2 > range2) {
+            return;
+        }
+
+        // aim toward target center
+        float angle = (float) Math.atan2(
+                (target.y + 24) - (y + 24),
+                (target.x + 24) - (x + 24));
+
+        // fire
+        shoot(angle, 10);
+
+        // reset cooldown
+        shootTimer = SHOOT_RATE;
+    }
+
+    // behold, pathfinding :tired:
+    private void pathfind(float dt) {
         // wander mode handler
         if (wanderTimer > 0f) {
             // decrement timers
