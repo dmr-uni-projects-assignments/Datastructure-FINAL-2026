@@ -226,6 +226,10 @@ public abstract class Character {
         }
     }
 
+    public int getHp() {
+        return this.hp;
+    }
+
     public void render(SpriteBatch batch) {
         batch.draw(texture, x, y);
     }

@@ -103,6 +103,36 @@ public class GameplayScreen implements Screen {
         }
 
         batch.end();
+
+        // healthbar
+        OrthographicCamera uiCam = new OrthographicCamera(Constants.WIDTH, Constants.HEIGHT);
+        uiCam.position.set(0, 0, 0);
+        uiCam.update();
+
+        shapeRenderer.setProjectionMatrix(uiCam.combined);
+
+        float barWidth = 300f;
+        float barHeight = 25f;
+        float offset = 10f;
+        float barX = -Constants.WIDTH / 2f + offset;
+        float barY = Constants.HEIGHT / 2f - offset - barHeight;
+
+        // hp percent
+        float hpPercent = player.getHp() / 100f;
+
+        // background + fill
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(barX, barY, barWidth, barHeight);
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.rect(barX, barY, barWidth * hpPercent, barHeight);
+        shapeRenderer.end();
+
+        // outline
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(barX, barY, barWidth, barHeight);
+        shapeRenderer.end();
     }
 
     private void update(float delta) {
