@@ -57,9 +57,14 @@ public class Enemy extends Character {
         }
 
         // aim toward target center
-        float angle = (float) Math.atan2(
-                (target.y + 24) - (y + 24),
-                (target.x + 24) - (x + 24));
+        float angle = (float) Math.atan2((target.y + 24) - (y + 24), (target.x + 24) - (x + 24));
+
+        // random miss chance
+        if (Math.random() < Constants.MISS_CHANCE) {
+            // random angle offset
+            float missOffset = (float) ((Math.random() * 2 - 1) * 15f);
+            angle += missOffset;
+        }
 
         // fire
         shoot(angle, 10);
