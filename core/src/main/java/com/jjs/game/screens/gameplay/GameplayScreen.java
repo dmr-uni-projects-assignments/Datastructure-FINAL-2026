@@ -51,6 +51,7 @@ public class GameplayScreen implements Screen {
 
         world = new TileMap();
         worldRenderer = new WorldRenderer();
+        // TODO: remove debug
         world.setWall(5, 5, Constants.Direction.NORTH, true);
         world.setWall(5, 5, Constants.Direction.EAST, true);
         world.setWall(10, 10, Constants.Direction.SOUTH, true);
@@ -89,6 +90,22 @@ public class GameplayScreen implements Screen {
 
     private void update(float delta) {
         updateMouse();
+
+        // left mouse click shooting
+        if (Gdx.input.justTouched()) {
+
+            float[] p = player.getCoords();
+
+            // mouse - player center
+            float dx = mousePos.x - (p[0] + 24);
+            float dy = mousePos.y - (p[1] + 24);
+
+            // atan2 converts vector -> angle in radians
+            float angle = (float) Math.atan2(dy, dx);
+
+            player.shoot(angle, 10);
+        }
+
         for (Character c : entities) {
             c.update(delta);
         }
@@ -97,7 +114,8 @@ public class GameplayScreen implements Screen {
         camera.update();
 
         // TODO: remove debug
-        // float[] temp = Functions.pixelToTile(player.getCoords()[0], player.getCoords()[1]);
+        // float[] temp = Functions.pixelToTile(player.getCoords()[0],
+        // player.getCoords()[1]);
         // System.out.println(String.format("%f, %f", temp[0], temp[1]));
     }
 

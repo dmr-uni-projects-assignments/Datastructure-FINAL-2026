@@ -13,7 +13,7 @@ public abstract class Character {
     protected float x;
     protected float y;
     protected final float speed = 250f;
-    protected int hp;
+    private int hp;
 
     // need to get these from the main game obj
     protected TileMap world;
@@ -191,7 +191,7 @@ public abstract class Character {
                 }
                 // check if ray is within 48x48px hitbox
                 if (px >= c.x && px <= c.x + 48 && py >= c.y && py <= c.y + 48) {
-                    c.hp -= damage;
+                    c.damage(damage);;
                     return;
                 }
             }
@@ -203,6 +203,14 @@ public abstract class Character {
     }
 
     public abstract void update(float dt);
+
+    public void damage(int damage) {
+        this.hp -= damage;
+        if (this.hp < 0) {
+            entities.remove(this);
+            dispose();
+        }
+    }
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, x, y);
