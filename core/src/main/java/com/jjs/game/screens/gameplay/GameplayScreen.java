@@ -6,16 +6,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
 import com.jjs.game.Main;
-import com.jjs.game.screens.gameplay.world.*;
-import com.jjs.game.screens.gameover.*;
+import com.jjs.game.screens.gameover.GameoverScreen;
+import com.jjs.game.screens.gameplay.world.TileMap;
+import com.jjs.game.screens.gameplay.world.WorldRenderer;
 import com.jjs.game.utils.Constants;
 import com.jjs.game.utils.Functions;
 
@@ -28,6 +29,8 @@ public class GameplayScreen implements Screen {
     private TileMap world;
     private WorldRenderer worldRenderer;
     private ShapeRenderer shapeRenderer;
+    private BitmapFont font;
+    private OrthographicCamera uiCam;
 
     // used for aiming later on
     private Vector3 mousePos = new Vector3();
@@ -52,8 +55,11 @@ public class GameplayScreen implements Screen {
     @Override
     public void show() {
         camera = new OrthographicCamera();
+        uiCam = new OrthographicCamera(Constants.WIDTH, Constants.HEIGHT);
+        uiCam.position.set(0, 0, 0);
 
         viewport = new StretchViewport(Constants.WIDTH, Constants.HEIGHT, camera);
+        font = new BitmapFont();
 
         viewport.apply();
         batch = new SpriteBatch();
@@ -110,8 +116,6 @@ public class GameplayScreen implements Screen {
         batch.end();
 
         // healthbar
-        OrthographicCamera uiCam = new OrthographicCamera(Constants.WIDTH, Constants.HEIGHT);
-        uiCam.position.set(0, 0, 0);
         uiCam.update();
 
         shapeRenderer.setProjectionMatrix(uiCam.combined);
@@ -138,20 +142,19 @@ public class GameplayScreen implements Screen {
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(barX, barY, barWidth, barHeight);
         shapeRenderer.end();
+
+        // player count text
+        batch.setProjectionMatrix(uiCam.combined);
+        batch.begin();
+
+        int remaining = entities.size() - 1; // exclude player
+
+        font.draw(batch, "Players Remaining: " + remaining, barX, barY - 10f);
+
+        batch.end();
     }
 
     private void update(float delta) {
-        // player death handling
-        if (player.getHp() <= 0) {
-            game.setScreen(new GameoverScreen(game, "Game Over!"));
-            return;
-        }
-        // win condition
-        else if (entities.size() == 1 && entities.get(0) == player) {
-            game.setScreen(new GameoverScreen(game, "You Win!"));
-            return;
-        }
-
         updateMouse();
 
         // left mouse click shooting
@@ -212,6 +215,17 @@ public class GameplayScreen implements Screen {
 
         camera.position.set(player.getCoords()[0], player.getCoords()[1], 0);
         camera.update();
+
+        // player death handling
+        if (player.getHp() <= 0) {
+            game.setScreen(new GameoverScreen(game, "Game Over! You placed #" + entities.size()));
+            return;
+        }
+        // win condition
+        else if (entities.size() == 1 && entities.get(0) == player) {
+            game.setScreen(new GameoverScreen(game, "You Win!"));
+            return;
+        }
 
         // TODO: remove debug
         // float[] temp = Functions.pixelToTile(player.getCoords()[0],
