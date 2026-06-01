@@ -1,4 +1,4 @@
-package com.game.tournament;
+package com.jjs.game.screens.tournament;
 
 /**
  * Represents a player in the tournament with kill/death/assist tracking.

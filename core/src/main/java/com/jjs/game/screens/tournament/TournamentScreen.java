@@ -1,7 +1,6 @@
-package com.game.tournament;
+package com.jjs.game.screens.tournament;
 
-import java.util.List;
-
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -13,251 +12,220 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-/**
- * TournamentScreen — libGDX Screen that renders the tournament tracker.
- *
- * Displays:
- *  - Header bar with tournament name and round
- *  - Leaderboard table (Rank | Name | Kills | Deaths | Assists | KDA)
- *  - Match log (last 8 entries)
- *  - Summary stats (top player, total kills)
- *
- * Drop this into your core module under:
- *   core/src/main/java/com/game/tournament/TournamentScreen.java
- *
- * To open this screen from your main game class:
- *   game.setScreen(new TournamentScreen(game, myTournament));
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class TournamentScreen implements Screen {
 
-    // ── Layout constants ──────────────────────────────────────────────────
-    private static final int PAD          = 20;
-    private static final int ROW_H        = 32;
-    private static final int HEADER_H     = 60;
-    private static final int FONT_SMALL   = 14; // approximate; BitmapFont doesn't scale like this out of the box
-    private static final Color COL_BG     = new Color(0.08f, 0.09f, 0.12f, 1f);
+    private static final int PAD = 20;
+    private static final int ROW_H = 32;
+    private static final int HEADER_H = 60;
+    private static final Color COL_BG = new Color(0.08f, 0.09f, 0.12f, 1f);
     private static final Color COL_HEADER = new Color(0.13f, 0.15f, 0.20f, 1f);
-    private static final Color COL_ROW1   = new Color(0.11f, 0.13f, 0.17f, 1f);
-    private static final Color COL_ROW2   = new Color(0.09f, 0.10f, 0.14f, 1f);
-    private static final Color COL_ACCENT = new Color(0.20f, 0.70f, 0.45f, 1f); // green accent
-    private static final Color COL_KILL   = new Color(0.90f, 0.35f, 0.35f, 1f); // red for kills
-    private static final Color COL_DEATH  = new Color(0.55f, 0.55f, 0.65f, 1f); // muted for deaths
-    private static final Color COL_ASSIST = new Color(0.35f, 0.65f, 0.90f, 1f); // blue for assists
-    private static final Color COL_GOLD   = new Color(1.00f, 0.82f, 0.20f, 1f); // #1 rank highlight
+    private static final Color COL_ROW1 = new Color(0.11f, 0.13f, 0.17f, 1f);
+    private static final Color COL_ROW2 = new Color(0.09f, 0.10f, 0.14f, 1f);
+    private static final Color COL_ACCENT = new Color(0.20f, 0.70f, 0.45f, 1f);
 
-    // ── libGDX objects ────────────────────────────────────────────────────
-    private final com.badlogic.gdx.Game gdxGame;
-    private final Tournament tournament;
-    private SpriteBatch   batch;
-    private ShapeRenderer shapes;
-    private BitmapFont    font;
-    private BitmapFont    fontSmall;
+    private final Game game;
+    private final TournamentData tournament;
+    private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
+    private BitmapFont font;
+    private BitmapFont fontSmall;
+    private int scrollOffset = 0;
+    private int maxScroll = 0;
 
-    // ── Sorting state ─────────────────────────────────────────────────────
-    private enum SortMode { SCORE, KILLS, KDA }
-    private SortMode sortMode = SortMode.SCORE;
+    // Player class
+    public static class PlayerData {
+        public String name;
+        public int kills;
+        public int deaths;
+        public int assists;
+        
+        public PlayerData(String name) {
+            this.name = name;
+            this.kills = 0;
+            this.deaths = 0;
+            this.assists = 0;
+        }
+        
+        public float getKDA() {
+            if (deaths == 0) return kills + assists;
+            return (float)(kills + assists) / deaths;
+        }
+    }
+    
+    // Tournament class
+    public static class TournamentData {
+        public String name;
+        public List<PlayerData> players;
+        
+        public TournamentData(String name) {
+            this.name = name;
+            this.players = new ArrayList<>();
+        }
+        
+        public void addPlayer(PlayerData player) {
+            players.add(player);
+        }
+        
+        public PlayerData getTopPlayer() {
+            if (players.isEmpty()) return null;
+            PlayerData top = players.get(0);
+            for (PlayerData p : players) {
+                if (p.getKDA() > top.getKDA()) {
+                    top = p;
+                }
+            }
+            return top;
+        }
+    }
 
-    public TournamentScreen(com.badlogic.gdx.Game gdxGame, Tournament tournament) {
-        this.gdxGame    = gdxGame;
+    public TournamentScreen(Game gdxGame, TournamentData tournament) {
+        this.game = gdxGame;
         this.tournament = tournament;
     }
 
     @Override
     public void show() {
-        batch     = new SpriteBatch();
-        shapes    = new ShapeRenderer();
-        font      = new BitmapFont();          // default libGDX font
+        batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+        font = new BitmapFont();
         fontSmall = new BitmapFont();
-        fontSmall.getData().setScale(0.85f);
+        fontSmall.getData().setScale(0.8f);
 
-        font.setColor(Color.WHITE);
-        fontSmall.setColor(Color.WHITE);
-
-        // ── Key bindings ──────────────────────────────────────────────────
-        // Press 1/2/3 to change sort mode; ESC to go back
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
-            public boolean keyDown(int key) {
-                if (key == Input.Keys.NUM_1) sortMode = SortMode.SCORE;
-                if (key == Input.Keys.NUM_2) sortMode = SortMode.KILLS;
-                if (key == Input.Keys.NUM_3) sortMode = SortMode.KDA;
-                if (key == Input.Keys.ESCAPE) gdxGame.setScreen(null); // or your main menu screen
+            public boolean scrolled(float amountX, float amountY) {
+                scrollOffset += amountY > 0 ? -ROW_H : ROW_H;
+                scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset));
                 return true;
+            }
+            
+            @Override
+            public boolean keyDown(int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    // Return to title screen
+                    com.jjs.game.screens.title.TitleScreen titleScreen = new com.jjs.game.screens.title.TitleScreen((com.jjs.game.Main) game);
+                    game.setScreen(titleScreen);
+                    return true;
+                }
+                return false;
             }
         });
     }
 
     @Override
     public void render(float delta) {
-        int W = Gdx.graphics.getWidth();
-        int H = Gdx.graphics.getHeight();
-
-        // ── Clear ─────────────────────────────────────────────────────────
-        Gdx.gl.glClearColor(COL_BG.r, COL_BG.g, COL_BG.b, 1f);
+        Gdx.gl.glClearColor(COL_BG.r, COL_BG.g, COL_BG.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        shapes.begin(ShapeType.Filled);
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
 
-        // ── Header bar ────────────────────────────────────────────────────
-        shapes.setColor(COL_HEADER);
-        shapes.rect(0, H - HEADER_H, W, HEADER_H);
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(COL_HEADER);
+        shapeRenderer.rect(0, h - HEADER_H, w, HEADER_H);
+        shapeRenderer.end();
 
-        // ── Accent line under header ──────────────────────────────────────
-        shapes.setColor(COL_ACCENT);
-        shapes.rect(0, H - HEADER_H - 3, W, 3);
-
-        // ── Leaderboard rows ──────────────────────────────────────────────
-        List<Player> ranked = getSortedPlayers();
-        int tableTop = H - HEADER_H - 16 - ROW_H; // start below header
-
-        // Column header row
-        shapes.setColor(COL_HEADER);
-        shapes.rect(PAD, tableTop, W - PAD * 2, ROW_H);
-
-        // Player rows
-        for (int i = 0; i < ranked.size(); i++) {
-            float y = tableTop - (i + 1) * ROW_H;
-            shapes.setColor(i % 2 == 0 ? COL_ROW1 : COL_ROW2);
-            shapes.rect(PAD, y, W - PAD * 2, ROW_H);
-        }
-
-        // ── Log panel ─────────────────────────────────────────────────────
-        int logTop = tableTop - (ranked.size() + 2) * ROW_H;
-        shapes.setColor(COL_HEADER);
-        shapes.rect(PAD, logTop - ROW_H * 8, W - PAD * 2, ROW_H * 9);
-
-        shapes.end();
-
-        // ── Text pass ─────────────────────────────────────────────────────
         batch.begin();
-
-        // Header text
         font.setColor(Color.WHITE);
-        font.draw(batch, "TOURNAMENT: " + tournament.getName().toUpperCase(),
-                PAD + 8, H - 16);
-        fontSmall.setColor(COL_ACCENT);
-        fontSmall.draw(batch, "Round " + tournament.getCurrentRound()
-                + "   |   Players: " + tournament.getPlayerCount()
-                + "   |   [1] Score  [2] Kills  [3] KDA  (sort)",
-                PAD + 8, H - 38);
-
-        // Column headers
-        float colY = tableTop + ROW_H - 8;
-        font.setColor(COL_ACCENT);
-        drawColumns(W, colY, null, true);
-
-        // Player rows
-        for (int i = 0; i < ranked.size(); i++) {
-            Player p   = ranked.get(i);
-            float  rowY = tableTop - i * ROW_H - 10;
-
-            if (i == 0) font.setColor(COL_GOLD);
-            else        font.setColor(Color.WHITE);
-
-            drawColumns(W, rowY, p, false);
-        }
-
-        // Sort mode indicator
-        fontSmall.setColor(COL_ACCENT);
-        fontSmall.draw(batch, "Sorted by: " + sortMode.name(),
-                PAD + 8, tableTop - ranked.size() * ROW_H - 8);
-
-        // Log header
-        font.setColor(COL_ACCENT);
-        font.draw(batch, "Match Log", PAD + 8, logTop + 4);
-
-        // Log entries (last 8)
-        List<String> log = tournament.getMatchLog();
-        int start = Math.max(0, log.size() - 8);
+        font.draw(batch, tournament.name + " - Tournament Tracker", PAD, h - HEADER_H + 40);
         fontSmall.setColor(Color.LIGHT_GRAY);
-        for (int i = 0; i < 8 && (start + i) < log.size(); i++) {
-            fontSmall.draw(batch, log.get(start + i),
-                    PAD + 10, logTop - 4 - i * (ROW_H - 8));
-        }
-
-        // Top player callout
-        Player top = tournament.getTopPlayer();
-        if (top != null) {
-            font.setColor(COL_GOLD);
-            font.draw(batch, "Top Player: " + top.getName()
-                    + "  (" + top.getKills() + "K / "
-                    + top.getDeaths() + "D / "
-                    + top.getAssists() + "A)",
-                    PAD + 8, logTop - ROW_H * 8 - 8);
-        }
-
+        fontSmall.draw(batch, "Press ESC to return to menu | Scroll to navigate", PAD, h - 15);
         batch.end();
+
+        List<PlayerData> ranked = getSortedPlayers();
+        maxScroll = Math.max(0, (ranked.size() * ROW_H) - (h - HEADER_H - 100));
+        
+        int startY = h - HEADER_H - ROW_H - 10;
+        
+        drawColumns(w, startY + ROW_H, null, true);
+        
+        for (int i = 0; i < ranked.size(); i++) {
+            PlayerData p = ranked.get(i);
+            float y = startY - (i * ROW_H) + scrollOffset;
+            if (y > -ROW_H && y < h - HEADER_H) {
+                drawColumns(w, y, p, false);
+            }
+        }
+
+        PlayerData top = tournament.getTopPlayer();
+        if (top != null) {
+            batch.begin();
+            fontSmall.setColor(COL_ACCENT);
+            fontSmall.draw(batch, "Top Player: " + top.name + " (KDA: " + String.format("%.2f", top.getKDA()) + ")", PAD, 40);
+            batch.end();
+        }
     }
 
-    /**
-     * Draws the leaderboard columns.
-     * If {@code header} is true, draws column labels; otherwise draws player data.
-     * Column layout (approximate %): Rank 5%, Name 30%, Kills 13%, Deaths 13%, Assists 13%, KDA 13%, Score 13%
-     */
-    private void drawColumns(int W, float y, Player p, boolean header) {
-        int usable = W - PAD * 2;
-        float x0 = PAD + 8;
-
-        float[] xPos = {
-            x0,
-            x0 + usable * 0.06f,
-            x0 + usable * 0.36f,
-            x0 + usable * 0.51f,
-            x0 + usable * 0.64f,
-            x0 + usable * 0.77f,
-            x0 + usable * 0.89f
-        };
+    private void drawColumns(int w, float y, PlayerData p, boolean header) {
+        int col1 = PAD;
+        int col2 = PAD + 80;
+        int col3 = PAD + 220;
+        int col4 = PAD + 340;
+        int col5 = PAD + 440;
+        int col6 = PAD + 540;
 
         if (header) {
-            String[] labels = {"#", "Name", "Kills", "Deaths", "Assists", "KDA", "Score"};
-            for (int i = 0; i < labels.length; i++) {
-                font.draw(batch, labels[i], xPos[i], y);
-            }
+            shapeRenderer.begin(ShapeType.Filled);
+            shapeRenderer.setColor(COL_HEADER);
+            shapeRenderer.rect(0, y - ROW_H, w, ROW_H);
+            shapeRenderer.end();
+            
+            batch.begin();
+            font.setColor(COL_ACCENT);
+            font.draw(batch, "RANK", col1, y - 10);
+            font.draw(batch, "NAME", col2, y - 10);
+            font.draw(batch, "KILLS", col3, y - 10);
+            font.draw(batch, "DEATHS", col4, y - 10);
+            font.draw(batch, "ASSISTS", col5, y - 10);
+            font.draw(batch, "KDA", col6, y - 10);
+            batch.end();
         } else if (p != null) {
+            shapeRenderer.begin(ShapeType.Filled);
+            shapeRenderer.setColor((int)(y / ROW_H) % 2 == 0 ? COL_ROW1 : COL_ROW2);
+            shapeRenderer.rect(0, y - ROW_H, w, ROW_H);
+            shapeRenderer.end();
+            
+            batch.begin();
+            font.setColor(Color.WHITE);
             int rank = getSortedPlayers().indexOf(p) + 1;
-
-            // Rank
-            font.draw(batch, String.valueOf(rank), xPos[0], y);
-            // Name
-            font.draw(batch, p.getName(), xPos[1], y);
-            // Kills
-            font.setColor(COL_KILL);
-            font.draw(batch, String.valueOf(p.getKills()), xPos[2], y);
-            // Deaths
-            font.setColor(COL_DEATH);
-            font.draw(batch, String.valueOf(p.getDeaths()), xPos[3], y);
-            // Assists
-            font.setColor(COL_ASSIST);
-            font.draw(batch, String.valueOf(p.getAssists()), xPos[4], y);
-            // KDA
-            font.setColor(Color.WHITE);
-            font.draw(batch, String.format("%.2f", p.getKDA()), xPos[5], y);
-            // Score
-            font.draw(batch, String.format("%.1f", p.getScore()), xPos[6], y);
-
-            // Reset color for next row
-            font.setColor(Color.WHITE);
+            font.draw(batch, String.valueOf(rank), col1, y - 10);
+            font.draw(batch, p.name, col2, y - 10);
+            font.draw(batch, String.valueOf(p.kills), col3, y - 10);
+            font.draw(batch, String.valueOf(p.deaths), col4, y - 10);
+            font.draw(batch, String.valueOf(p.assists), col5, y - 10);
+            font.setColor(COL_ACCENT);
+            font.draw(batch, String.format("%.2f", p.getKDA()), col6, y - 10);
+            batch.end();
         }
     }
 
-    private List<Player> getSortedPlayers() {
-        return switch (sortMode) {
-            case KILLS -> tournament.getLeaderboardByKills();
-            case KDA   -> tournament.getLeaderboardByKDA();
-            default    -> tournament.getLeaderboardByScore();
-        };
+    private List<PlayerData> getSortedPlayers() {
+        List<PlayerData> sorted = new ArrayList<>(tournament.players);
+        Collections.sort(sorted, (a, b) -> Float.compare(b.getKDA(), a.getKDA()));
+        return sorted;
     }
 
-    @Override public void resize(int width, int height) { batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height); }
-    @Override public void pause()  {}
-    @Override public void resume() {}
-    @Override public void hide()   {}
+    @Override
+    public void resize(int width, int height) {}
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
 
     @Override
     public void dispose() {
-        batch.dispose();
-        shapes.dispose();
-        font.dispose();
-        fontSmall.dispose();
+        if (batch != null) batch.dispose();
+        if (shapeRenderer != null) shapeRenderer.dispose();
+        if (font != null) font.dispose();
+        if (fontSmall != null) fontSmall.dispose();
     }
 }

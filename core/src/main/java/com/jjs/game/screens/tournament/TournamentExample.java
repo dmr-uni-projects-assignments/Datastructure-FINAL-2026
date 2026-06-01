@@ -1,4 +1,4 @@
-package com.game.tournament;
+package com.jjs.game.screens.tournament;
 
 /**
  * TournamentExample — shows how to use Tournament + TournamentScreen

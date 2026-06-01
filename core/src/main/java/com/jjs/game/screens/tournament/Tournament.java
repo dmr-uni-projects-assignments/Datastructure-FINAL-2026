@@ -1,4 +1,4 @@
-package com.game.tournament;
+package com.jjs.game.screens.tournament;
 
 import java.util.ArrayList;
 import java.util.Comparator;
