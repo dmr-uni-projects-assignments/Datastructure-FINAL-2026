@@ -43,7 +43,7 @@ public class TitleScreen implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameplayScreen());
+                game.setScreen(new GameplayScreen(game));
             }
         });
         
@@ -105,7 +105,9 @@ public class TitleScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        dispose();
+    }
 
     @Override
     public void dispose() {

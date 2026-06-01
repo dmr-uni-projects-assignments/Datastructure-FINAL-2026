@@ -4,19 +4,23 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import com.jjs.game.utils.*;
+import com.jjs.game.Main;
 import com.jjs.game.screens.gameplay.world.*;
+import com.jjs.game.screens.gameover.*;
+import com.jjs.game.utils.Constants;
+import com.jjs.game.utils.Functions;
 
 public class GameplayScreen implements Screen {
+    private Main game;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -32,7 +36,8 @@ public class GameplayScreen implements Screen {
     private ArrayList<Character> entities;
     private ArrayList<ShotTrail> trails;
 
-    public GameplayScreen() {
+    public GameplayScreen(Main game) {
+        this.game = game;
     }
 
     private void updateMouse() {
@@ -136,6 +141,17 @@ public class GameplayScreen implements Screen {
     }
 
     private void update(float delta) {
+        // player death handling
+        if (player.getHp() <= 0) {
+            game.setScreen(new GameoverScreen(game, "Game Over!"));
+            return;
+        }
+        // win condition
+        else if (entities.size() == 1 && entities.get(0) == player) {
+            game.setScreen(new GameoverScreen(game, "You Win!"));
+            return;
+        }
+
         updateMouse();
 
         // left mouse click shooting
