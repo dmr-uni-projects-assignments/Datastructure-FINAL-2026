@@ -147,7 +147,7 @@ public class GameplayScreen implements Screen {
         batch.setProjectionMatrix(uiCam.combined);
         batch.begin();
 
-        int remaining = entities.size() - 1; // exclude player
+        int remaining = entities.size();
 
         font.draw(batch, "Players Remaining: " + remaining, barX, barY - 10f);
 
