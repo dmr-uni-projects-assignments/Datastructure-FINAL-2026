@@ -15,6 +15,7 @@ public class Player extends Character {
 
     @Override
     public void update(float dt) {
+        regen(dt);
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             move(true, (speed * dt));

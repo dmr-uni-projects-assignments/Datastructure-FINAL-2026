@@ -10,6 +10,8 @@ public class Constants {
     public static final float WALL_DENSITY = 0.25f;
     public static final float MISS_CHANCE = 0.4f;
 
+    public static final float REGEN_INTERVAL = 0.2f;
+
     public enum Direction {
         NORTH,
         SOUTH,

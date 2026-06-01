@@ -14,6 +14,7 @@ public abstract class Character {
     protected float y;
     protected final float speed = 250f;
     private int hp;
+    private float regenTimer = 0f;
 
     // need to get these from the main game obj
     protected TileMap world;
@@ -228,6 +229,20 @@ public abstract class Character {
 
     public int getHp() {
         return this.hp;
+    }
+
+    public void regen(float dt) {
+        // dead entities dont regen
+        if (hp <= 0) {
+            return;
+        }
+
+        regenTimer += dt;
+        if (regenTimer >= Constants.REGEN_INTERVAL) {
+            hp++;
+            regenTimer = 0f;
+        }
+        hp = Math.clamp(hp, 0, 100);
     }
 
     public void render(SpriteBatch batch) {

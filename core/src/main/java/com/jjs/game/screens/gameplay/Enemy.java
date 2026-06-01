@@ -25,6 +25,7 @@ public class Enemy extends Character {
 
     @Override
     public void update(float dt) {
+        regen(dt);
         shooting(dt);
         pathfind(dt);
     }
