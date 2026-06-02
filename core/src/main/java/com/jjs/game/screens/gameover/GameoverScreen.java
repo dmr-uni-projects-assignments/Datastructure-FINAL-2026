@@ -1,5 +1,6 @@
 package com.jjs.game.screens.gameover;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,7 +16,6 @@ import com.jjs.game.screens.title.TitleScreen;
 import com.jjs.game.utils.Constants;
 
 public class GameoverScreen implements Screen {
-
     private final Main game;
 
     private Stage stage;
@@ -29,7 +29,6 @@ public class GameoverScreen implements Screen {
 
     @Override
     public void show() {
-
         stage = new Stage(new StretchViewport(Constants.WIDTH, Constants.HEIGHT));
 
         Gdx.input.setInputProcessor(stage);
@@ -89,6 +88,7 @@ public class GameoverScreen implements Screen {
 
     @Override
     public void hide() {
+        dispose();
     }
 
     @Override

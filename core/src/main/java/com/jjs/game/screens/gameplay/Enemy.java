@@ -132,6 +132,12 @@ public class Enemy extends Character {
             return;
         }
 
+        // run away if hp is low
+        if (getHp() <= 20) {
+            startWander();
+            return;
+        }
+
         // next pixel target to move toward [x,y]
         float[] nextPixel = Functions.tileToPixel(nextTile[0], nextTile[1]);
         float targetX = nextPixel[0] + 8f;

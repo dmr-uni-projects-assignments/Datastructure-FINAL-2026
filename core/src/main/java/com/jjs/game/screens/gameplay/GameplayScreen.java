@@ -218,7 +218,7 @@ public class GameplayScreen implements Screen {
 
         // player death handling
         if (player.getHp() <= 0) {
-            game.setScreen(new GameoverScreen(game, "Game Over! You placed #" + entities.size()));
+            game.setScreen(new GameoverScreen(game, "Game Over! You placed #" + (entities.size() + 1)));
             return;
         }
         // win condition
