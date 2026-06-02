@@ -128,6 +128,13 @@ public class TournamentManager {
         StorageManager.save(this);
     }
 
+    public void clear() {
+
+        if (players != null) {
+            players.clear();
+        }
+    }
+
     // sorting returns UI snapshots
 
     public ArrayList<PlayerRecord> sortByKills() {

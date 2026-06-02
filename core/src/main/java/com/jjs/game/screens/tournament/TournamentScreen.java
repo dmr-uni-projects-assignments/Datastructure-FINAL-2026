@@ -222,8 +222,12 @@ public class TournamentScreen implements Screen {
 
     @Override
     public void dispose() {
-
-        StorageManager.save(manager);
+        if (manager != null) {
+            StorageManager.save(manager);
+            manager.getPlayers().clear();
+            manager.clear();
+            manager = null;
+        }
 
         if (stage != null) {
             stage.dispose();
