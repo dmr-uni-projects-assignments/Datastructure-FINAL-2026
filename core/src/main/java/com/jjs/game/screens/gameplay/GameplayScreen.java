@@ -67,10 +67,6 @@ public class GameplayScreen implements Screen {
         world = new TileMap();
         worldRenderer = new WorldRenderer();
         shapeRenderer = new ShapeRenderer();
-        // TODO: remove debug
-        // world.setWall(5, 5, Constants.Direction.NORTH, true);
-        // world.setWall(5, 5, Constants.Direction.EAST, true);
-        // world.setWall(10, 10, Constants.Direction.SOUTH, true);
 
         trails = new ArrayList<>();
         // populate entity list
@@ -226,11 +222,6 @@ public class GameplayScreen implements Screen {
             game.setScreen(new GameoverScreen(game, "You Win!"));
             return;
         }
-
-        // TODO: remove debug
-        // float[] temp = Functions.pixelToTile(player.getCoords()[0],
-        // player.getCoords()[1]);
-        // System.out.println(String.format("%f, %f", temp[0], temp[1]));
     }
 
     @Override

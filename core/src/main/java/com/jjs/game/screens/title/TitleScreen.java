@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import com.jjs.game.Main;
-import com.jjs.game.screens.gameplay.GameplayScreen;
+import com.jjs.game.screens.gameplay.*;
 import com.jjs.game.screens.tournament.StorageManager;
 import com.jjs.game.screens.tournament.TournamentManager;
 import com.jjs.game.screens.tournament.TournamentScreen;
@@ -46,7 +46,7 @@ public class TitleScreen implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameplayScreen(game));
+                game.setScreen(new PreGameplayScreen(game));
             }
         });
 
