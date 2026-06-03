@@ -376,10 +376,10 @@ public class DataStructureBenchmarkScreen implements Screen {
 
         Runtime runtime = Runtime.getRuntime();
 
-        int[] sizes = {
-                1000,
-                100000,
-                1000000
+        int[] mapSizes = {
+                32,
+                128,
+                256
         };
 
         sb.append(
@@ -390,12 +390,22 @@ public class DataStructureBenchmarkScreen implements Screen {
                 .append(RUNS)
                 .append(" runs\n\n");
 
-        for (int size : sizes) {
+        for (int worldSize : mapSizes) {
+
+            Constants.MAP_SIZE = worldSize;
 
             sb.append(
-                    "Operations: ")
-                    .append(size)
-                    .append("\n\n");
+                    "====================\n");
+
+            sb.append(
+                    "Map Size: ")
+                    .append(worldSize)
+                    .append("x")
+                    .append(worldSize)
+                    .append("\n");
+
+            sb.append(
+                    "====================\n\n");
 
             double c1 = 0, l1 = 0, u1 = 0, b1 = 0, m1 = 0;
             double c2 = 0, l2 = 0, u2 = 0, b2 = 0, m2 = 0;
@@ -407,7 +417,13 @@ public class DataStructureBenchmarkScreen implements Screen {
                 long before;
                 long after;
 
+                int lookupRuns = 100000;
+                int updateRuns = 100000;
+                int bfsRuns = 100;
+
+                // =========================
                 // 2D ARRAY
+                // =========================
 
                 System.gc();
 
@@ -431,7 +447,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < lookupRuns; i++) {
                     map1.getTile(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -445,7 +461,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < updateRuns; i++) {
                     map1.setWall(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -461,10 +477,6 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                int bfsRuns = Math.max(
-                        1,
-                        size / 10000);
-
                 for (int i = 0; i < bfsRuns; i++) {
                     bfsTileMap(
                             map1);
@@ -473,8 +485,44 @@ public class DataStructureBenchmarkScreen implements Screen {
                 b1 += (System.nanoTime()
                         - start)
                         / 1_000_000.0;
+            }
 
+            sb.append(
+                    "2D Array\n");
+            sb.append(
+                    "Construct: ")
+                    .append(c1 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Lookup: ")
+                    .append(l1 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Update: ")
+                    .append(u1 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "BFS: ")
+                    .append(b1 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Memory: ")
+                    .append(m1 / RUNS)
+                    .append(" MB\n\n");
+
+            for (int run = 0; run < RUNS; run++) {
+
+                long start;
+                long before;
+                long after;
+
+                int lookupRuns = 100000;
+                int updateRuns = 100000;
+                int bfsRuns = 100;
+
+                // =========================
                 // HASHMAP
+                // =========================
 
                 System.gc();
 
@@ -498,7 +546,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < lookupRuns; i++) {
                     map2.getTile(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -512,7 +560,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < updateRuns; i++) {
                     map2.setWall(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -536,8 +584,44 @@ public class DataStructureBenchmarkScreen implements Screen {
                 b2 += (System.nanoTime()
                         - start)
                         / 1_000_000.0;
+            }
 
+            sb.append(
+                    "HashMap\n");
+            sb.append(
+                    "Construct: ")
+                    .append(c2 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Lookup: ")
+                    .append(l2 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Update: ")
+                    .append(u2 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "BFS: ")
+                    .append(b2 / RUNS)
+                    .append(" ms\n");
+            sb.append(
+                    "Memory: ")
+                    .append(m2 / RUNS)
+                    .append(" MB\n\n");
+
+            for (int run = 0; run < RUNS; run++) {
+
+                long start;
+                long before;
+                long after;
+
+                int lookupRuns = 1;
+                int updateRuns = 1;
+                int bfsRuns = 1;
+
+                // =========================
                 // ARRAYLIST
+                // =========================
 
                 System.gc();
 
@@ -561,7 +645,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < lookupRuns; i++) {
                     map3.getTile(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -575,7 +659,7 @@ public class DataStructureBenchmarkScreen implements Screen {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < updateRuns; i++) {
                     map3.setWall(
                             random.nextInt(
                                     Constants.MAP_SIZE),
@@ -601,54 +685,26 @@ public class DataStructureBenchmarkScreen implements Screen {
                         / 1_000_000.0;
             }
 
-            sb.append("2D Array\n");
-            sb.append("Construct: ")
-                    .append(c1 / RUNS)
-                    .append(" ms\n");
-            sb.append("Lookup: ")
-                    .append(l1 / RUNS)
-                    .append(" ms\n");
-            sb.append("Update: ")
-                    .append(u1 / RUNS)
-                    .append(" ms\n");
-            sb.append("BFS: ")
-                    .append(b1 / RUNS)
-                    .append(" ms\n");
-            sb.append("Memory: ")
-                    .append(m1 / RUNS)
-                    .append(" MB\n\n");
-
-            sb.append("HashMap\n");
-            sb.append("Construct: ")
-                    .append(c2 / RUNS)
-                    .append(" ms\n");
-            sb.append("Lookup: ")
-                    .append(l2 / RUNS)
-                    .append(" ms\n");
-            sb.append("Update: ")
-                    .append(u2 / RUNS)
-                    .append(" ms\n");
-            sb.append("BFS: ")
-                    .append(b2 / RUNS)
-                    .append(" ms\n");
-            sb.append("Memory: ")
-                    .append(m2 / RUNS)
-                    .append(" MB\n\n");
-
-            sb.append("ArrayList\n");
-            sb.append("Construct: ")
+            sb.append(
+                    "ArrayList\n");
+            sb.append(
+                    "Construct: ")
                     .append(c3 / RUNS)
                     .append(" ms\n");
-            sb.append("Lookup: ")
+            sb.append(
+                    "Lookup: ")
                     .append(l3 / RUNS)
                     .append(" ms\n");
-            sb.append("Update: ")
+            sb.append(
+                    "Update: ")
                     .append(u3 / RUNS)
                     .append(" ms\n");
-            sb.append("BFS: ")
+            sb.append(
+                    "BFS: ")
                     .append(b3 / RUNS)
                     .append(" ms\n");
-            sb.append("Memory: ")
+            sb.append(
+                    "Memory: ")
                     .append(m3 / RUNS)
                     .append(" MB\n\n");
         }
@@ -740,7 +796,9 @@ public class DataStructureBenchmarkScreen implements Screen {
                     cy);
 
             for (int i = 0; i < 4; i++) {
-
+                if (tile == null) {
+                    continue;
+                }
                 int nx = cx + dirs[i][0];
 
                 int ny = cy + dirs[i][1];
