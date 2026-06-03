@@ -257,6 +257,10 @@ public class Enemy extends Character {
 
             // visit all cardinal directions
             for (int i = 0; i < 4; i++) {
+                // weird edge case
+                if (tile == null) {
+                    continue;
+                }
                 // visited tile coords
                 int nx = cx + dirs[i][0];
                 int ny = cy + dirs[i][1];
