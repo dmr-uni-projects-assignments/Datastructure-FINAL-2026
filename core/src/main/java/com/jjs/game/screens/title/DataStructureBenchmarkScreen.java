@@ -376,6 +376,12 @@ public class DataStructureBenchmarkScreen implements Screen {
 
         Runtime runtime = Runtime.getRuntime();
 
+        int[] sizes = {
+                1000,
+                100000,
+                1000000
+        };
+
         sb.append(
                 "=== TileMap Benchmark ===\n");
 
@@ -384,258 +390,274 @@ public class DataStructureBenchmarkScreen implements Screen {
                 .append(RUNS)
                 .append(" runs\n\n");
 
-        double c1 = 0, l1 = 0, u1 = 0, b1 = 0, m1 = 0;
-        double c2 = 0, l2 = 0, u2 = 0, b2 = 0, m2 = 0;
-        double c3 = 0, l3 = 0, u3 = 0, b3 = 0, m3 = 0;
+        for (int size : sizes) {
 
-        for (int run = 0; run < RUNS; run++) {
+            sb.append(
+                    "Operations: ")
+                    .append(size)
+                    .append("\n\n");
 
-            long start;
-            long before;
-            long after;
+            double c1 = 0, l1 = 0, u1 = 0, b1 = 0, m1 = 0;
+            double c2 = 0, l2 = 0, u2 = 0, b2 = 0, m2 = 0;
+            double c3 = 0, l3 = 0, u3 = 0, b3 = 0, m3 = 0;
 
-            // 2D ARRAY
+            for (int run = 0; run < RUNS; run++) {
 
-            System.gc();
+                long start;
+                long before;
+                long after;
 
-            before = runtime.totalMemory()
-                    - runtime.freeMemory();
+                // 2D ARRAY
 
-            start = System.nanoTime();
+                System.gc();
 
-            TileMap map1 = new TileMap();
+                before = runtime.totalMemory()
+                        - runtime.freeMemory();
 
-            c1 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
+                start = System.nanoTime();
 
-            after = runtime.totalMemory()
-                    - runtime.freeMemory();
+                TileMap map1 = new TileMap();
 
-            m1 += (after - before)
-                    / 1024.0
-                    / 1024.0;
+                c1 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
 
-            start = System.nanoTime();
+                after = runtime.totalMemory()
+                        - runtime.freeMemory();
 
-            for (int i = 0; i < 100000; i++) {
-                map1.getTile(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE));
+                m1 += (after - before)
+                        / 1024.0
+                        / 1024.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map1.getTile(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE));
+                }
+
+                l1 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map1.setWall(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            Constants.Direction.NORTH,
+                            random.nextBoolean());
+                }
+
+                u1 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                int bfsRuns = Math.max(
+                        1,
+                        size / 10000);
+
+                for (int i = 0; i < bfsRuns; i++) {
+                    bfsTileMap(
+                            map1);
+                }
+
+                b1 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                // HASHMAP
+
+                System.gc();
+
+                before = runtime.totalMemory()
+                        - runtime.freeMemory();
+
+                start = System.nanoTime();
+
+                TileMapHashMap map2 = new TileMapHashMap();
+
+                c2 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                after = runtime.totalMemory()
+                        - runtime.freeMemory();
+
+                m2 += (after - before)
+                        / 1024.0
+                        / 1024.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map2.getTile(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE));
+                }
+
+                l2 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map2.setWall(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            Constants.Direction.NORTH,
+                            random.nextBoolean());
+                }
+
+                u2 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < bfsRuns; i++) {
+                    bfsTileMap(
+                            map2);
+                }
+
+                b2 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                // ARRAYLIST
+
+                System.gc();
+
+                before = runtime.totalMemory()
+                        - runtime.freeMemory();
+
+                start = System.nanoTime();
+
+                TileMapArrayList map3 = new TileMapArrayList();
+
+                c3 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                after = runtime.totalMemory()
+                        - runtime.freeMemory();
+
+                m3 += (after - before)
+                        / 1024.0
+                        / 1024.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map3.getTile(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE));
+                }
+
+                l3 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < size; i++) {
+                    map3.setWall(
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            random.nextInt(
+                                    Constants.MAP_SIZE),
+                            Constants.Direction.NORTH,
+                            random.nextBoolean());
+                }
+
+                u3 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
+
+                start = System.nanoTime();
+
+                for (int i = 0; i < bfsRuns; i++) {
+                    bfsTileMap(
+                            map3);
+                }
+
+                b3 += (System.nanoTime()
+                        - start)
+                        / 1_000_000.0;
             }
 
-            l1 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
+            sb.append("2D Array\n");
+            sb.append("Construct: ")
+                    .append(c1 / RUNS)
+                    .append(" ms\n");
+            sb.append("Lookup: ")
+                    .append(l1 / RUNS)
+                    .append(" ms\n");
+            sb.append("Update: ")
+                    .append(u1 / RUNS)
+                    .append(" ms\n");
+            sb.append("BFS: ")
+                    .append(b1 / RUNS)
+                    .append(" ms\n");
+            sb.append("Memory: ")
+                    .append(m1 / RUNS)
+                    .append(" MB\n\n");
 
-            start = System.nanoTime();
+            sb.append("HashMap\n");
+            sb.append("Construct: ")
+                    .append(c2 / RUNS)
+                    .append(" ms\n");
+            sb.append("Lookup: ")
+                    .append(l2 / RUNS)
+                    .append(" ms\n");
+            sb.append("Update: ")
+                    .append(u2 / RUNS)
+                    .append(" ms\n");
+            sb.append("BFS: ")
+                    .append(b2 / RUNS)
+                    .append(" ms\n");
+            sb.append("Memory: ")
+                    .append(m2 / RUNS)
+                    .append(" MB\n\n");
 
-            for (int i = 0; i < 100000; i++) {
-                map1.setWall(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        Constants.Direction.NORTH,
-                        random.nextBoolean());
-            }
-
-            u1 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100; i++) {
-                bfsTileMap(
-                        map1);
-            }
-
-            b1 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            // HASHMAP
-
-            System.gc();
-
-            before = runtime.totalMemory()
-                    - runtime.freeMemory();
-
-            start = System.nanoTime();
-
-            TileMapHashMap map2 = new TileMapHashMap();
-
-            c2 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            after = runtime.totalMemory()
-                    - runtime.freeMemory();
-
-            m2 += (after - before)
-                    / 1024.0
-                    / 1024.0;
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100000; i++) {
-                map2.getTile(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE));
-            }
-
-            l2 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100000; i++) {
-                map2.setWall(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        Constants.Direction.NORTH,
-                        random.nextBoolean());
-            }
-
-            u2 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100; i++) {
-                bfsTileMap(
-                        map2);
-            }
-
-            b2 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            // ARRAYLIST
-
-            System.gc();
-
-            before = runtime.totalMemory()
-                    - runtime.freeMemory();
-
-            start = System.nanoTime();
-
-            TileMapArrayList map3 = new TileMapArrayList();
-
-            c3 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            after = runtime.totalMemory()
-                    - runtime.freeMemory();
-
-            m3 += (after - before)
-                    / 1024.0
-                    / 1024.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100000; i++) {
-                map3.getTile(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE));
-            }
-
-            l3 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100000; i++) {
-                map3.setWall(
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        random.nextInt(
-                                Constants.MAP_SIZE),
-                        Constants.Direction.NORTH,
-                        random.nextBoolean());
-            }
-
-            u3 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
-
-            start = System.nanoTime();
-
-            for (int i = 0; i < 100; i++) {
-                bfsTileMap(
-                        map3);
-            }
-
-            b3 += (System.nanoTime()
-                    - start)
-                    / 1_000_000.0;
+            sb.append("ArrayList\n");
+            sb.append("Construct: ")
+                    .append(c3 / RUNS)
+                    .append(" ms\n");
+            sb.append("Lookup: ")
+                    .append(l3 / RUNS)
+                    .append(" ms\n");
+            sb.append("Update: ")
+                    .append(u3 / RUNS)
+                    .append(" ms\n");
+            sb.append("BFS: ")
+                    .append(b3 / RUNS)
+                    .append(" ms\n");
+            sb.append("Memory: ")
+                    .append(m3 / RUNS)
+                    .append(" MB\n\n");
         }
 
-        sb.append("2D Array\n");
-        sb.append("Construct: ")
-                .append(c1 / RUNS)
-                .append(" ms\n");
-        sb.append("Lookup: ")
-                .append(l1 / RUNS)
-                .append(" ms\n");
-        sb.append("Update: ")
-                .append(u1 / RUNS)
-                .append(" ms\n");
-        sb.append("BFS: ")
-                .append(b1 / RUNS)
-                .append(" ms\n");
-        sb.append("Memory: ")
-                .append(m1 / RUNS)
-                .append(" MB\n\n");
-
-        sb.append("HashMap\n");
-        sb.append("Construct: ")
-                .append(c2 / RUNS)
-                .append(" ms\n");
-        sb.append("Lookup: ")
-                .append(l2 / RUNS)
-                .append(" ms\n");
-        sb.append("Update: ")
-                .append(u2 / RUNS)
-                .append(" ms\n");
-        sb.append("BFS: ")
-                .append(b2 / RUNS)
-                .append(" ms\n");
-        sb.append("Memory: ")
-                .append(m2 / RUNS)
-                .append(" MB\n\n");
-
-        sb.append("ArrayList\n");
-        sb.append("Construct: ")
-                .append(c3 / RUNS)
-                .append(" ms\n");
-        sb.append("Lookup: ")
-                .append(l3 / RUNS)
-                .append(" ms\n");
-        sb.append("Update: ")
-                .append(u3 / RUNS)
-                .append(" ms\n");
-        sb.append("BFS: ")
-                .append(b3 / RUNS)
-                .append(" ms\n");
-        sb.append("Memory: ")
-                .append(m3 / RUNS)
-                .append(" MB\n\n");
-
         String retVal = sb.toString();
-        System.out.println(retVal);
+
+        System.out.println(
+                retVal);
+
         return retVal;
     }
 
