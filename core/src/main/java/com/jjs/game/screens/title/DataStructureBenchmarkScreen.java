@@ -25,7 +25,7 @@ public class DataStructureBenchmarkScreen implements Screen {
     private Skin skin;
     private Random random = new Random();
 
-    private static final int RUNS = 20;
+    private static final int RUNS = 100;
 
     public DataStructureBenchmarkScreen(Main game) {
         this.game = game;

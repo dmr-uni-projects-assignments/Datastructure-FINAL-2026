@@ -7,21 +7,22 @@ public class TileMap {
     private static final int MAP_SIZE = Constants.MAP_SIZE; // constantly typing constants is annoying
 
     public TileMap() {
+
         // populate world 2d array
         tiles = new Tile[MAP_SIZE][MAP_SIZE];
-        for (int x = 0; x < MAP_SIZE; x++) {
-            for (int y = 0; y < MAP_SIZE; y++) {
-                tiles[x][y] = new Tile();
-            }
-        }
 
-        // random walls
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {
-                setWall(x, y, Constants.Direction.NORTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.SOUTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.EAST, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.WEST, Math.random() < Constants.WALL_DENSITY);
+
+                Tile tile = new Tile();
+
+                // fill every wall
+                tile.setWall(Constants.Direction.NORTH, true);
+                tile.setWall(Constants.Direction.SOUTH, true);
+                tile.setWall(Constants.Direction.EAST, true);
+                tile.setWall(Constants.Direction.WEST, true);
+
+                tiles[x][y] = tile;
             }
         }
     }

@@ -8,22 +8,39 @@ public class TileMapHashMap {
     private static final int MAP_SIZE = Constants.MAP_SIZE;
 
     public TileMapHashMap() {
-        tiles = new HashMap<>();
+
+        // pre-size hashmap to avoid resize/rehash cost
+        tiles = new HashMap<>(
+                MAP_SIZE * MAP_SIZE);
 
         // populate world
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {
-                tiles.put(key(x, y), new Tile());
+                tiles.put(
+                        key(x, y),
+                        new Tile());
             }
         }
 
-        // random walls
+        // fill ALL walls for benchmark consistency
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {
-                setWall(x, y, Constants.Direction.NORTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.SOUTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.EAST, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.WEST, Math.random() < Constants.WALL_DENSITY);
+
+                setWall(x, y,
+                        Constants.Direction.NORTH,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.SOUTH,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.EAST,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.WEST,
+                        true);
             }
         }
     }

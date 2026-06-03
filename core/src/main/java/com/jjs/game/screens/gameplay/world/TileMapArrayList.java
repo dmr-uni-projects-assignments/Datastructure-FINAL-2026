@@ -8,11 +8,12 @@ public class TileMapArrayList {
     private static final int MAP_SIZE = Constants.MAP_SIZE;
 
     public TileMapArrayList() {
-        tiles = new ArrayList<>();
+        tiles = new ArrayList<>(MAP_SIZE);
 
         // populate world
         for (int x = 0; x < MAP_SIZE; x++) {
-            ArrayList<Tile> column = new ArrayList<>();
+
+            ArrayList<Tile> column = new ArrayList<>(MAP_SIZE);
 
             for (int y = 0; y < MAP_SIZE; y++) {
                 column.add(new Tile());
@@ -21,13 +22,25 @@ public class TileMapArrayList {
             tiles.add(column);
         }
 
-        // random walls
+        // fill ALL walls for benchmark consistency
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {
-                setWall(x, y, Constants.Direction.NORTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.SOUTH, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.EAST, Math.random() < Constants.WALL_DENSITY);
-                setWall(x, y, Constants.Direction.WEST, Math.random() < Constants.WALL_DENSITY);
+
+                setWall(x, y,
+                        Constants.Direction.NORTH,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.SOUTH,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.EAST,
+                        true);
+
+                setWall(x, y,
+                        Constants.Direction.WEST,
+                        true);
             }
         }
     }
