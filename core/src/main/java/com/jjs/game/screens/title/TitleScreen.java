@@ -42,6 +42,8 @@ public class TitleScreen implements Screen {
         Label title = new Label("Untitled Building Shooter", skin);
         TextButton playButton = new TextButton("Play Game", skin);
         TextButton tournamentButton = new TextButton("Tournament Tracker", skin);
+        TextButton benchmarkButton = new TextButton("DS Benchmark", skin);
+
 
         playButton.addListener(new ClickListener() {
             @Override
@@ -61,9 +63,20 @@ public class TitleScreen implements Screen {
                 game.setScreen(new TournamentScreen(game, manager));
             }
         });
+
+        benchmarkButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                game.setScreen(new DataStructureBenchmarkScreen(game));
+            }
+        });
+
         table.add(title).padBottom(50).row();
         table.add(playButton).padBottom(20).width(200).height(50).row();
         table.add(tournamentButton).width(200).height(50);
+        table.add(benchmarkButton).width(250).height(50);
+
     }
 
     @Override
