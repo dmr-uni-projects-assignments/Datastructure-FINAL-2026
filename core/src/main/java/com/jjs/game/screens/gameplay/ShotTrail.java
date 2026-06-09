@@ -17,6 +17,7 @@ public class ShotTrail {
     }
 
     public boolean update(float dt) {
+        // decrement life and return false if dead
         life -= dt;
         return life <= 0f;
     }

@@ -178,6 +178,7 @@ public class Enemy extends Character {
     }
 
     private void startWander() {
+        // reset wander vars here
         wanderTimer = 0.5f + random.nextFloat();
         wanderDir = random.nextInt(4);
     }

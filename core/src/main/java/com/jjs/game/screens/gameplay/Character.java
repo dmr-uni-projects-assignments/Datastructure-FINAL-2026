@@ -21,8 +21,7 @@ public abstract class Character {
     protected ArrayList<Character> entities;
     protected ArrayList<ShotTrail> trails;
 
-    public Character(Texture texture, float x, float y, TileMap world, ArrayList<Character> entities,
-            ArrayList<ShotTrail> trails) {
+    public Character(Texture texture, float x, float y, TileMap world, ArrayList<Character> entities, ArrayList<ShotTrail> trails) {
         this.texture = texture;
         this.x = x;
         this.y = y;
@@ -46,6 +45,7 @@ public abstract class Character {
             newX += amount;
         }
 
+        // for collision checking
         float left = newX;
         float right = newX + 48;
         float bottom = newY;
@@ -59,9 +59,11 @@ public abstract class Character {
             int bottomTile = (int) Math.floor(bottom / 64f);
             int topTile = (int) Math.floor((top - 1) / 64f);
 
+            // if tile bound crossed
             if (newTileX < currentTileX) {
                 for (int ty = bottomTile; ty <= topTile; ty++) {
                     Tile tile = world.getTile(currentTileX, ty);
+                    // dont move further if wall exists between boundary cross
                     if (tile != null && tile.hasWall(Constants.Direction.WEST)) {
                         return false;
                     }
@@ -221,7 +223,8 @@ public abstract class Character {
 
     public void damage(int damage) {
         this.hp -= damage;
-        if (this.hp < 0) {
+        // remove self if dead
+        if (this.hp <= 0) {
             entities.remove(this);
             dispose();
         }

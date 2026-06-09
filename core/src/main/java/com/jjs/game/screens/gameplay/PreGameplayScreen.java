@@ -35,20 +35,25 @@ public class PreGameplayScreen implements Screen {
         table.pad(30);
         stage.addActor(table);
 
+        // header
         Label title = new Label("Game Setup", skin);
         Label mapLabel = new Label("Map Size: " + Constants.MAP_SIZE, skin);
 
+        // sliders
         Slider mapSlider = new Slider(8, 256, 1, false, skin);
         mapSlider.setValue(Constants.MAP_SIZE);
+
         int currentPlayers = Constants.ENEMY_COUNT + 1;
         Label playerLabel = new Label("Player Count: " + currentPlayers, skin);
         Slider playerSlider = new Slider(2, 100, 1, false, skin);
         playerSlider.setValue(currentPlayers);
+
         int currentAccuracy = (int) ((1f - Constants.MISS_CHANCE) * 100);
         Label accuracyLabel = new Label("Enemy Accuracy: " + currentAccuracy + "%", skin);
         Slider accuracySlider = new Slider(0f, 1f, 0.01f, false, skin);
         accuracySlider.setValue(1f - Constants.MISS_CHANCE);
 
+        // buttons
         TextButton startButton = new TextButton("Start Game", skin);
         TextButton backButton = new TextButton("Back", skin);
 
@@ -78,6 +83,7 @@ public class PreGameplayScreen implements Screen {
             new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
+                    // set config options on start
                     Constants.MAP_SIZE = (int) mapSlider.getValue();
                     Constants.ENEMY_COUNT = (int) playerSlider.getValue() - 1;
                     Constants.MISS_CHANCE = 1f - accuracySlider.getValue();

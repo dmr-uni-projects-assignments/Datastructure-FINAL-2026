@@ -27,6 +27,7 @@ public class TileMap {
     }
 
     public Tile getTile(int x, int y) {
+        // bounds check
         if (x < 0 || y < 0 || x >= MAP_SIZE || y >= MAP_SIZE) {
             return null;
         }
@@ -35,12 +36,13 @@ public class TileMap {
 
     public void setWall(int x, int y, Constants.Direction dir, boolean value) {
         Tile tile = getTile(x, y);
+        // integrity check
         if (tile == null) {
             return;
         }
 
         tile.setWall(dir, value);
-        // set adjacent
+        // set adjacent wall's tile too, since walls are shared between tiles
         switch (dir) {
             case NORTH:
                 Tile north = getTile(x, y + 1);

@@ -17,6 +17,7 @@ public class Player extends Character {
     public void update(float dt) {
         regen(dt);
 
+        // movement is handled by keyboard instead of automatic pathfind
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             move(true, (speed * dt));
         }

@@ -44,17 +44,14 @@ public class GameplayScreen implements Screen {
     }
 
     private void updateMouse() {
-        mousePos.set(
-                Gdx.input.getX(),
-                Gdx.input.getY(),
-                0);
-
+        mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(mousePos);
     }
 
     @Override
     public void show() {
         camera = new OrthographicCamera();
+        // separate cam for ui elements so it doesnt follow the world/game cam
         uiCam = new OrthographicCamera(Constants.WIDTH, Constants.HEIGHT);
         uiCam.position.set(0, 0, 0);
 
@@ -67,8 +64,8 @@ public class GameplayScreen implements Screen {
         world = new TileMap();
         worldRenderer = new WorldRenderer();
         shapeRenderer = new ShapeRenderer();
-
         trails = new ArrayList<>();
+
         // populate entity list
         entities = new ArrayList<>();
         float x = (float) (Math.random() * Constants.MAP_SIZE * 64);
@@ -76,7 +73,6 @@ public class GameplayScreen implements Screen {
         player = new Player(x, y, world, entities, trails);
         entities.add(player);
         for (int i = 0; i < Constants.ENEMY_COUNT; i++) {
-
             x = (float) (Math.random() * Constants.MAP_SIZE * 64);
             y = (float) (Math.random() * Constants.MAP_SIZE * 64);
 
@@ -90,6 +86,7 @@ public class GameplayScreen implements Screen {
 
         ScreenUtils.clear(0f, 0f, 0f, 1f);
 
+        // render all
         worldRenderer.render(world, camera);
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -185,7 +182,6 @@ public class GameplayScreen implements Screen {
                 } else {
                     dir = Constants.Direction.WEST;
                 }
-
             } else {
                 if (dy > 0) {
                     dir = Constants.Direction.NORTH;
@@ -198,12 +194,15 @@ public class GameplayScreen implements Screen {
             world.setWall(tile[0], tile[1], dir, true);
         }
 
+        // handle trails
         for (int i = trails.size() - 1; i >= 0; i--) {
+            // when trail life is over
             if (trails.get(i).update(delta)) {
                 trails.remove(i);
             }
         }
 
+        // handle characters
         for (int i = 0; i < entities.size(); i++) {
             Character c = entities.get(i);
             c.update(delta);
